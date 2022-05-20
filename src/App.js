@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+
 import './App.css';
 import MiniDrawer from './Componet/Layout';
 import { Route, Switch } from 'react-router-dom';
