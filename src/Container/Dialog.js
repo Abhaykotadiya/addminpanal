@@ -1,3 +1,4 @@
+// import Dialog  from './Dialog'
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -6,14 +7,14 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+// import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import * as yup from 'yup';
 import { Form, Formik, useFormik } from 'formik';
 import { DataGrid } from '@mui/x-data-grid';
-
-
-
-
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 
 export default function Medicine() {
@@ -61,7 +62,7 @@ export default function Medicine() {
       ...value
     }
 
-    if (localdata === null) {   
+    if (localdata === null) {
       localStorage.setItem("medicine", JSON.stringify([data]))
     } else {
       localdata.push(data)
@@ -74,110 +75,130 @@ export default function Medicine() {
   }
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
+
     { field: 'name', headerName: 'Name', width: 130 },
     { field: 'price', headerName: ' Price', width: 130 },
     { field: 'quantity', headerName: 'Quantity', width: 130 },
     { field: 'expiry', headerName: 'Expiry', width: 130 },
-    { field: 'delete', headerName: 'Delete', width: 130 }
-  ];
-
-  const loadData = () => {
-    let localData = JSON.parse(localStorage.getItem("medicine"))
-
-    if (localData !== null) {
-      setData(localData)
-    }
-  }
-
-  useEffect(
-    () => {
-      loadData()
+    {field: 'delete', headerName: 'Delete', width: 130,
+      renderCell: (params) => (
+        < IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)} >
+          <DeleteIcon/>
+        </IconButton >
+      )
     },
+    {field: 'edit', headerName: 'Edit', width: 130,
+    renderCell: (params) => (
+      < IconButton aria-label="" onClick={() => (params.row.id)} >
+        <DeleteIcon/>
+      </IconButton >
+    )
+  }
+  ];
+ const handleDelete =(id) =>{
+  let localData = JSON.parse(localStorage.getItem('medicine'));
+  let filterData = localData.filter((v ,i) => v.id !==id);
+  localStorage.setItem('medicine',JSON.stringify(filterData));
+  loadData()
+
+ }
+ const loadData = () => {
+  let localData = JSON.parse(localStorage.getItem("medicine"))
+
+  if (localData !== null) {
+    setData(localData)
+  }
+}
+
+useEffect(
+  () => {
+    loadData()
+  },
   [])
 
-  return (
+return (
 
-  
-    <Box>
-      <Container>
-        <div>
-          <Button variant="outlined" onClick={handleClickOpen}>
-            Add Medicine
-          </Button>
-          <div style={{ height: 400, width: '100%' }}>
-            <DataGrid
-              rows={data}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
-              checkboxSelection
-            />
-          </div>
-          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Add Medicine</DialogTitle>
-            <Formik value={formik}>
-              <Form onSubmit={formik.handleSubmit}>
-                <DialogContent>
 
-                  <TextField
-                    margin="dense"
-                    id="name"
-                    label="name"
-                    type="name"
-                    fullWidth
-                    variant="standard"
-                    onChange={formik.handleChange}
-                    defaultValue={formik.values.name}
-                    helperText={formik.errors.name}
-                    error={formik.errors.name ? true : false}
-                  />
-                  <TextField
-                    margin="dense"
-                    id="price"
-                    label="price"
-                    type="price"
-                    fullWidth
-                    variant="standard"
-                    onChange={formik.handleChange}
-                    defaultValue={formik.values.price}
-                    helperText={formik.errors.price}
-                    error={formik.errors.price ? true : false}
-                  />
-                  <TextField
-                    margin="dense"
-                    id="quantity"
-                    label="quantity"
-                    fullWidth
-                    variant="standard"
-                    onChange={formik.handleChange}
-                    defaultValue={formik.values.quantity}
-                    helperText={formik.errors.quantity}
-                    error={formik.errors.quantity ? true : false}
-
-                  />
-                  <TextField
-                    margin="dense"
-                    id="expiry"
-                    label="expiry"
-                    fullWidth
-                    variant="standard"
-                    onChange={formik.handleChange}
-                    defaultValue={formik.values.expiry}
-                    helperText={formik.errors.expiry}
-                    error={formik.errors.expiry ? true : false}
-                  />
-                  <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button type="submit">Submit</Button>
-                  </DialogActions>
-                </DialogContent>
-              </Form>
-            </Formik>
-          </Dialog>
+  <Box>
+    <Container>
+      <div>
+        <Button variant="outlined" onClick={handleClickOpen}>
+          Add Medicine
+        </Button>
+        <div style={{ height: 400, width: '100%' }}>
+          <DataGrid
+            rows={data}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            checkboxSelection
+          />
         </div>
-      </Container>
-    </Box>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Add Medicine</DialogTitle>
+          <Formik value={formik}>
+            <Form onSubmit={formik.handleSubmit}>
+              <DialogContent>
 
-  )
+                <TextField
+                  margin="dense"
+                  id="name"
+                  label="name"
+                  type="name"
+                  fullWidth
+                  variant="standard"
+                  onChange={formik.handleChange}
+                  defaultValue={formik.values.name}
+                  helperText={formik.errors.name}
+                  error={formik.errors.name ? true : false}
+                />
+                <TextField
+                  margin="dense"
+                  id="price"
+                  label="price"
+                  type="price"
+                  fullWidth
+                  variant="standard"
+                  onChange={formik.handleChange}
+                  defaultValue={formik.values.price}
+                  helperText={formik.errors.price}
+                  error={formik.errors.price ? true : false}
+                />
+                <TextField
+                  margin="dense"
+                  id="quantity"
+                  label="quantity"
+                  fullWidth
+                  variant="standard"
+                  onChange={formik.handleChange}
+                  defaultValue={formik.values.quantity}
+                  helperText={formik.errors.quantity}
+                  error={formik.errors.quantity ? true : false}
+
+                />
+                <TextField
+                  margin="dense"
+                  id="expiry"
+                  label="expiry"
+                  fullWidth
+                  variant="standard"
+                  onChange={formik.handleChange}
+                  defaultValue={formik.values.expiry}
+                  helperText={formik.errors.expiry}
+                  error={formik.errors.expiry ? true : false}
+                />
+
+                <DialogActions>
+                  <Button onClick={handleClose}>Cancel</Button>
+                  <Button type="submit">Submit</Button>
+                </DialogActions>
+              </DialogContent>
+            </Form>
+          </Formik>
+        </Dialog>
+      </div>
+    </Container>
+  </Box>
+
+)
 }
